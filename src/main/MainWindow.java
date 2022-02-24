@@ -53,8 +53,7 @@ public class MainWindow {
         from420Button.addActionListener(e -> sample(Sampler.S420, process::upSample));
         from411Button.addActionListener(e -> sample(Sampler.S411, process::upSample));
         from422Button.addActionListener(e -> sample(Sampler.S422, process::upSample));
-        qualityButton.addActionListener(e -> calculate(process.getColorTransformOriginal().getPixels(),
-                process.getColorTransform().getPixels()));
+        qualityButton.addActionListener(e -> calculate(process.getColorTransformOriginal(), process.getColorTransform()));
         transformButton.addActionListener(e -> transform());
     }
 
@@ -83,10 +82,14 @@ public class MainWindow {
         process.getComponent(Component.Cb).show();
     }
 
-    private void calculate(int[][] original, int[][] edited) {
+    private void calculate(ColorTransform original, ColorTransform edited) {
         Quality quality = new Quality();
-        double mse = quality.getMse(original, edited);
-        mseField.setText(Double.toString(mse));
+        edited.convertYCbCrToRgb();
+        double redMse = quality.getMse(original.getRed(), edited.getRed());
+        double blueMse = quality.getMse(original.getBlue(), edited.getBlue());
+        double greenMse = quality.getMse(original.getGreen(), edited.getGreen());
+        double mse = (redMse + blueMse + greenMse) / 3;
+        mseField.setText(String.format("%.2f", mse));
         psnrField.setText(String.format("%.2f", quality.getPsnr(mse)));
 
     }

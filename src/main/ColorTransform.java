@@ -212,4 +212,16 @@ public class ColorTransform {
     public void setY(Matrix y) {
         this.y = y;
     }
+
+    public int[][] getRed() {
+        return red;
+    }
+
+    public int[][] getGreen() {
+        return green;
+    }
+
+    public int[][] getBlue() {
+        return blue;
+    }
 }
