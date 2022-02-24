@@ -16,7 +16,6 @@ public class Quality {
     }
 
     public double getPsnr(double mse) {
-        System.out.println("a");
         double log_arg = Math.pow((Math.pow(2, 24) - 1), 2) / mse;
         return 10 * Math.log10(log_arg);
     }

@@ -143,17 +143,6 @@ public class ColorTransform {
         return upSampled;
     }
 
-    public int[][] getPixels() {
-        convertYCbCrToRgb();
-        int[][] pixels = new int[imageWidth][imageHeight];
-        for (int i = 0; i < imageHeight; i++) {
-            for (int j = 0; j < imageWidth; j++) {
-                pixels[i][j] = new Color(red[i][j], green[i][j], blue[i][j]).getRGB();
-            }
-        }
-        return pixels;
-    }
-
     public Matrix transform(Matrix transformMatrix, Matrix inputMatrix) {
         return transformMatrix.times(inputMatrix).times(transformMatrix.transpose());
     }
@@ -179,14 +168,6 @@ public class ColorTransform {
                 bImage.setRGB(j, i, rgb);
             }
         }
-    }
-
-    public int getImageHeight() {
-        return imageHeight;
-    }
-
-    public int getImageWidth() {
-        return imageWidth;
     }
 
     public Matrix getY() {
