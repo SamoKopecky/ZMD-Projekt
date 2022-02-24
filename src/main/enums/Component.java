@@ -1,4 +1,4 @@
-package main.org.enums;
+package main.enums;
 
 public enum Component {
     RED, BLUE, GREEN, Y, Cb, Cr

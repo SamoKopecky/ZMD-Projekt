@@ -2,8 +2,8 @@ package main;
 
 import Jama.Matrix;
 import ij.ImagePlus;
-import main.org.enums.Component;
-import main.org.enums.Sampler;
+import main.enums.Component;
+import main.enums.Sampler;
 
 import javax.swing.*;
 import java.util.function.Consumer;
@@ -97,5 +97,4 @@ public class MainWindow {
     private void Initialize() {
         process = new Process(new ImagePlus("Lenna.png"));
     }
-
 }

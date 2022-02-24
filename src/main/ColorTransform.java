@@ -2,8 +2,8 @@ package main;
 
 import Jama.Matrix;
 import ij.ImagePlus;
-import main.org.enums.Component;
 
+import main.enums.Component;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -46,12 +46,12 @@ public class ColorTransform {
     }
 
     private void updateMaps() {
-        notRgbComponents.put(main.org.enums.Component.Y, y);
-        notRgbComponents.put(main.org.enums.Component.Cb, Cb);
-        notRgbComponents.put(main.org.enums.Component.Cr, Cr);
-        RgbComponents.put(main.org.enums.Component.RED, red);
-        RgbComponents.put(main.org.enums.Component.GREEN, green);
-        RgbComponents.put(main.org.enums.Component.BLUE, blue);
+        notRgbComponents.put(Component.Y, y);
+        notRgbComponents.put(Component.Cb, Cb);
+        notRgbComponents.put(Component.Cr, Cr);
+        RgbComponents.put(Component.RED, red);
+        RgbComponents.put(Component.GREEN, green);
+        RgbComponents.put(Component.BLUE, blue);
     }
 
     public void fromImageToRgb() {
@@ -70,7 +70,7 @@ public class ColorTransform {
         return new ImagePlus("Rekonstruovany obraz", bImage);
     }
 
-    public ImagePlus createImageFromComponent(main.org.enums.Component component) {
+    public ImagePlus createImageFromComponent(Component component) {
         updateMaps();
         BufferedImage bImage = null;
         if (component == Component.Y || component == Component.Cb || component == Component.Cr) {

@@ -9,7 +9,6 @@ public class TransformMatrix {
             dctMatrix.set(0, j, Math.sqrt((double) 1 / size) * Math.cos(0));
         }
 
-
         for (int i = 1; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 double numerator = (2 * j + 1) * i * Math.PI;
