@@ -74,7 +74,7 @@ public class ColorTransform {
     public ImagePlus createImageFromRgb() {
         BufferedImage bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         bImageFromRgb(bImage, red, green, blue);
-        return new ImagePlus("Rekonstruovany obraz", bImage);
+        return new ImagePlus("RGB", bImage);
     }
 
     public ImagePlus createImageFromComponent(Component component) {
