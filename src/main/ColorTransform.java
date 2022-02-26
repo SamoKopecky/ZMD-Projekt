@@ -88,6 +88,9 @@ public class ColorTransform {
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     int color = (int) x.get(i, j);
+                    if (color < 0) {
+                        color = Math.abs(color);
+                    }
                     bImage.setRGB(j, i, new Color(color, color, color).getRGB());
                 }
             }
