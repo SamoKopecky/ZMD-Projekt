@@ -4,10 +4,13 @@ import Jama.Matrix;
 import ij.ImagePlus;
 
 import main.enums.Component;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.util.HashMap;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ColorTransform {
     private final int[][] red;
@@ -27,6 +30,10 @@ public class ColorTransform {
     private final HashMap<Component, Matrix> notRgbComponents = new HashMap<>();
     private final HashMap<Component, int[][]> RgbComponents = new HashMap<>();
 
+    private Matrix[] blocksY;
+    private Matrix[] blocksCb;
+    private Matrix[] blocksCr;
+
     public ColorTransform(BufferedImage bImage) {
         this.bImage = bImage;
         this.colorModel = bImage.getColorModel();
@@ -45,7 +52,7 @@ public class ColorTransform {
         fromImageToRgb();
     }
 
-    private void updateMaps() {
+    public void updateMaps() {
         notRgbComponents.put(Component.Y, y);
         notRgbComponents.put(Component.Cb, Cb);
         notRgbComponents.put(Component.Cr, Cr);
@@ -151,6 +158,68 @@ public class ColorTransform {
         return transformMatrix.transpose().times(inputMatrix).times(transformMatrix);
     }
 
+    public void divideComponentIntoBlocks(Matrix matrix, int size, Consumer<Matrix[]> setter) {
+        int widthBlocks = matrix.getColumnDimension() / size;
+        int heightBlocks = matrix.getRowDimension() / size;
+        Matrix[] blocks = new Matrix[widthBlocks * heightBlocks];
+        int counter = 0;
+        for (int i = 0; i < heightBlocks; i++) {
+            for (int j = 0; j < widthBlocks; j++) {
+                Matrix temp = matrix.getMatrix(i * size, i * size + (size - 1), j * size, j * size + (size - 1));
+                blocks[counter] = new Matrix(size, size);
+                blocks[counter].setMatrix(0, size - 1, 0, size - 1, temp);
+                counter++;
+            }
+        }
+        setter.accept(blocks);
+    }
+
+    public void mergeBlocksIntoComponent(int size, Matrix componentMatrix, Matrix[] blocks) {
+        int height = componentMatrix.getRowDimension();
+        int width = componentMatrix.getColumnDimension();
+        int counter = 0;
+        for (int i = 0; i < height / size; i++) {
+            for (int j = 0; j < width / size; j++) {
+                componentMatrix.setMatrix(i * size, i * size + (size - 1), j * size, j * size + (size - 1), blocks[counter]);
+                counter++;
+            }
+        }
+    }
+
+    public void transformBlocks(Matrix transformMatrix, Matrix[] blocks) {
+        for (int i = 0; i < blocks.length; i++) {
+            blocks[i] = transform(transformMatrix, blocks[i]);
+        }
+    }
+
+    public void inverseTransformBlocks(Matrix transformMatrix, Matrix[] blocks) {
+        for (int i = 0; i < blocks.length; i++) {
+            blocks[i] = inverseTransform(transformMatrix, blocks[i]);
+        }
+    }
+
+    public void quantize(int[][] quantizationMatrix, Matrix[] blocks) {
+        for (Matrix block : blocks) {
+            for (int j = 0; j < 8; j++) {
+                for (int k = 0; k < 8; k++) {
+                    int value = (int) (block.get(j, k) / quantizationMatrix[j][k]);
+                    block.set(j, k, value);
+                }
+            }
+        }
+    }
+
+    public void inverseQuantize(int[][] quantizationMatrix, Matrix[] blocks) {
+        for (Matrix block : blocks) {
+            for (int j = 0; j < 8; j++) {
+                for (int k = 0; k < 8; k++) {
+                    int value = (int) (block.get(j, k) * quantizationMatrix[j][k]);
+                    block.set(j, k, value);
+                }
+            }
+        }
+    }
+
     private int fixValue(double value) {
         int newValue = (int) Math.round(value);
         if (newValue > 255) {
@@ -204,5 +273,29 @@ public class ColorTransform {
 
     public int[][] getBlue() {
         return blue;
+    }
+
+    public void setBlocksY(Matrix[] blocksY) {
+        this.blocksY = blocksY;
+    }
+
+    public void setBlocksCb(Matrix[] blocksCb) {
+        this.blocksCb = blocksCb;
+    }
+
+    public void setBlocksCr(Matrix[] blocksCr) {
+        this.blocksCr = blocksCr;
+    }
+
+    public Matrix[] getBlocksY() {
+        return blocksY;
+    }
+
+    public Matrix[] getBlocksCb() {
+        return blocksCb;
+    }
+
+    public Matrix[] getBlocksCr() {
+        return blocksCr;
     }
 }
