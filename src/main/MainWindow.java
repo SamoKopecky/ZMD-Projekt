@@ -36,6 +36,7 @@ public class MainWindow {
     private JTextField qValue;
     private JButton resetButton;
     private JButton RGBButton;
+    private JButton closeAllButton;
     private final ButtonGroup transGroup = new ButtonGroup();
     private final ButtonGroup scaleGroup = new ButtonGroup();
     private Function<Integer, Matrix> transformationFunc;
@@ -74,8 +75,9 @@ public class MainWindow {
             q = qSlider.getValue();
             qValue.setText(Integer.toString(q));
         });
-        resetButton.addActionListener(e -> reset());
+        resetButton.addActionListener(e -> process.loadOriginalImage());
         RGBButton.addActionListener(e -> process.showImage());
+        closeAllButton.addActionListener(e -> reset());
     }
 
     private void reset() {
@@ -83,7 +85,6 @@ public class MainWindow {
         for (int i = 1; i < windows.length; i++) {
             windows[i].dispose();
         }
-        process.loadOriginalImage();
     }
 
     private void transform(int size) {
