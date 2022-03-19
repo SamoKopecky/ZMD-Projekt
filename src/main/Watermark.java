@@ -18,12 +18,15 @@ public class Watermark {
     public int size = 8;
     public int heightBlocks;
     public int widthBlocks;
+    public ColorTransform originalWatermark;
+    public ColorTransform extractedWatermark;
 
     public Watermark(int bitDepth) {
         this.bitDepth = bitDepth;
         process = new Process(new ImagePlus("Lenna.png"));
         cTrans = process.getcTrans();
         BufferedImage bImage = new ImagePlus("watermark.png").getBufferedImage();
+        originalWatermark = new ColorTransform(bImage);
         width = bImage.getWidth();
         height = bImage.getHeight();
         watermarkPixels = new Matrix(height, width);
@@ -65,7 +68,7 @@ public class Watermark {
         int counter = fillBlocks(function);
 
         Matrix[] markedBlocks = new Matrix[counter];
-        Matrix scaledWatermarkPixels = scaleWatermarkPixels(this.watermarkPixels);
+        Matrix scaledWatermarkPixels = scaleWatermarkPixels(this.watermarkPixels, cTrans::downSample, widthBlocks);
         counter = 0;
         for (int i = 0; i < heightBlocks; i++) {
             for (int j = 0; j < widthBlocks; j++) {
@@ -82,26 +85,33 @@ public class Watermark {
 
     public ImagePlus extractTranWatermark(Function<Integer, Matrix> function, int u1, int v1, int u2, int v2) {
         fillBlocks(function);
-        int[][] watermark = new int[heightBlocks][widthBlocks];
+        Matrix watermark = new Matrix(heightBlocks, widthBlocks);
         for (int i = 0; i < heightBlocks; i++) {
             for (int j = 0; j < widthBlocks; j++) {
                 Matrix block = this.blocks[i][j];
                 double b1 = block.get(u1, v1);
                 double b2 = block.get(u2, v2);
                 if (b1 > b2) {
-                    watermark[i][j] = 0;
+                    watermark.set(i, j, 0);
                 } else {
-                    watermark[i][j] = 255;
+                    watermark.set(i, j, 255);
                 }
             }
         }
-        return createImagePlus(watermark, widthBlocks, heightBlocks);
-
+        int[][] watermarkArr = new int[height][width];
+        Matrix scaledWatermarkPixels = scaleWatermarkPixels(watermark, cTrans::upSample, width);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                watermarkArr[i][j] = (int) scaledWatermarkPixels.get(i, j);
+            }
+        }
+        return createImagePlus(watermarkArr, width, height);
     }
 
     private ImagePlus createImagePlus(int[][] watermark, int width, int height) {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ColorTransform.bImageFromRgb(bufferedImage, watermark, watermark, watermark, height, width);
+        extractedWatermark = new ColorTransform(bufferedImage);
         return new ImagePlus("Watermark", bufferedImage);
     }
 
@@ -123,14 +133,13 @@ public class Watermark {
     }
 
 
-    private Matrix scaleWatermarkPixels(Matrix watermark) {
-        while (watermark.getRowDimension() != widthBlocks) {
-            watermark = cTrans.downSample(watermark);
+    private Matrix scaleWatermarkPixels(Matrix watermark, Function<Matrix, Matrix> scale, int target) {
+        while (watermark.getRowDimension() != target) {
+            watermark = scale.apply(watermark);
             watermark = watermark.transpose();
-            watermark = cTrans.downSample(watermark);
+            watermark = scale.apply(watermark);
             watermark = watermark.transpose();
         }
-
         return watermark;
     }
 

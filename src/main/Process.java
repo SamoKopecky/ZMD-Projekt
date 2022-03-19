@@ -149,11 +149,23 @@ public class Process {
         watermark.cTrans.setbImage(attackFunc.apply(watermark.cTrans.createBufferedImageFromRgb()));
         watermark.cTrans.fromImageToRgb();
         watermark.cTrans.convertRgbToYCbCr();
-
     }
 
     public ImagePlus extractTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function) {
         return watermark.extractTranWatermark(function, u1, v1, u2, v2);
+    }
+
+
+    public String[] calculateQuality(ColorTransform original, ColorTransform edited) {
+        String[] result = new String[2];
+        Quality quality = new Quality();
+        double redMse = quality.getMse(original.getRed(), edited.getRed());
+        double blueMse = quality.getMse(original.getBlue(), edited.getBlue());
+        double greenMse = quality.getMse(original.getGreen(), edited.getGreen());
+        double mse = (redMse + blueMse + greenMse) / 3;
+        result[0] = String.format("%.2f", mse);
+        result[1] = String.format("%.2f dB", quality.getPsnr(mse));
+        return result;
     }
 
     public ColorTransform getcTrans() {
@@ -162,5 +174,9 @@ public class Process {
 
     public ColorTransform getColorTransformOriginal() {
         return colorTransformOriginal;
+    }
+
+    public Watermark getWatermark() {
+        return watermark;
     }
 }

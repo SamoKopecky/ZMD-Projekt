@@ -65,6 +65,9 @@ public class MainWindow {
     private JTextField attackCompressionTextField;
     private JSlider attackCompressionJSlider;
     private JRadioButton rotate45RadioButton;
+    private JButton attackQualityButton;
+    private JTextField attackMSE;
+    private JTextField attackPSNR;
     private final ButtonGroup transGroup = new ButtonGroup();
     private final ButtonGroup scaleGroup = new ButtonGroup();
     private final ButtonGroup watermarkGroup = new ButtonGroup();
@@ -124,7 +127,17 @@ public class MainWindow {
         yButton.addActionListener(e -> process.getComponent(Component.Y).show());
         cbButton.addActionListener(e -> process.getComponent(Component.Cb).show());
         crButton.addActionListener(e -> process.getComponent(Component.Cr).show());
-        qualityButton.addActionListener(e -> calculate(process.getColorTransformOriginal(), process.getcTrans()));
+        qualityButton.addActionListener(e -> {
+            String[] result = process.calculateQuality(process.getColorTransformOriginal(), process.getcTrans());
+            mseField.setText(result[0]);
+            psnrField.setText(result[1]);
+        });
+        attackQualityButton.addActionListener(e -> {
+            String[] result = process.calculateQuality(process.getWatermark().originalWatermark,
+                    process.getWatermark().extractedWatermark);
+            attackMSE.setText(result[0]);
+            attackPSNR.setText(result[1]);
+        });
         startProcessButton.addActionListener(e -> transform(Integer.parseInt(blockSize.getText())));
         qSlider.addChangeListener(e -> {
             q = qSlider.getValue();
@@ -234,18 +247,6 @@ public class MainWindow {
             }
         }
         return null;
-    }
-
-    private void calculate(ColorTransform original, ColorTransform edited) {
-        Quality quality = new Quality();
-        edited.convertYCbCrToRgb();
-        double redMse = quality.getMse(original.getRed(), edited.getRed());
-        double blueMse = quality.getMse(original.getBlue(), edited.getBlue());
-        double greenMse = quality.getMse(original.getGreen(), edited.getGreen());
-        double mse = (redMse + blueMse + greenMse) / 3;
-        mseField.setText(String.format("%.2f", mse));
-        psnrField.setText(String.format("%.2f dB", quality.getPsnr(mse)));
-
     }
 
     private void Initialize() {
