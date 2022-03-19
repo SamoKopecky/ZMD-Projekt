@@ -1,55 +1,166 @@
 package main;
 
+import Jama.Matrix;
 import ij.ImagePlus;
 import main.enums.Component;
 
 import java.awt.image.BufferedImage;
+import java.util.function.Function;
 
 public class Watermark {
-    public BufferedImage bImage;
     public int width;
     public int height;
-    public int[][] pixels;
+    public Matrix watermarkPixels;
     public int bitDepth;
-    public ColorTransform colorTransform;
+    public ColorTransform cTrans;
+    public Process process;
+    public Matrix[][] blocks;
+    int size = 8;
+    int heightBlocks;
+    int widthBlocks;
 
     public Watermark(int bitDepth) {
         this.bitDepth = bitDepth;
-        this.colorTransform = new ColorTransform(new ImagePlus("Lenna.png").getBufferedImage());
-        bImage = new ImagePlus("watermark.png").getBufferedImage();
+        process = new Process(new ImagePlus("Lenna.png"));
+        cTrans = process.getcTrans();
+        BufferedImage bImage = new ImagePlus("watermark.png").getBufferedImage();
         width = bImage.getWidth();
         height = bImage.getHeight();
-        pixels = new int[height][width];
+        watermarkPixels = new Matrix(height, width);
+        heightBlocks = height / size;
+        widthBlocks = width / size;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                pixels[i][j] = bImage.getColorModel().getBlue(bImage.getRGB(i, j));
+                watermarkPixels.set(i, j, bImage.getColorModel().getBlue(bImage.getRGB(i, j)));
             }
         }
     }
 
-    public void putWatermark(Component component) {
-        int[][] data = colorTransform.getRgbComponents().get(component);
+    public void putLsbWatermark(Component component) {
+        int[][] data = cTrans.getRgbComponents().get(component);
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                data[i][j] = setZeroAtBitDepth(data[i][j]) | setOneAtBitDepth(pixels[j][i]);
+                data[i][j] = setZeroAtBitDepth(data[i][j]) | setOneAtBitDepth((int) watermarkPixels.get(j, i));
             }
         }
-        colorTransform.getRgbSetters().get(component).accept(data);
-        colorTransform.createImageFromRgb().show();
+        cTrans.getRgbSetters().get(component).accept(data);
+        cTrans.createImageFromRgb("Inserted watermark").show();
     }
 
-    public ImagePlus extractWatermark(Component component) {
-        int[][] data = colorTransform.getRgbComponents().get(component);
+    public ImagePlus extractLsbWatermark(Component component) {
+        int[][] data = cTrans.getRgbComponents().get(component);
         int[][] watermark = new int[height][width];
+
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 watermark[i][j] = blackOrWhite(data[i][j] & setOneAtBitDepth(255));
             }
         }
+        return createImagePlus(watermark, width, height);
+    }
+
+    public void putTranWatermark(Function<Integer, Matrix> function, int u1, int v1, int u2, int v2) {
+        int counter = fillBlocks(function);
+
+        Matrix[] markedBlocks = new Matrix[counter];
+        Matrix scaledWatermarkPixels = scaleWatermarkPixels(this.watermarkPixels);
+        counter = 0;
+        for (int i = 0; i < heightBlocks; i++) {
+            for (int j = 0; j < widthBlocks; j++) {
+                insertWatermark(u1, v1, u2, v2, i, j, scaledWatermarkPixels);
+                markedBlocks[counter] = this.blocks[i][j];
+                counter++;
+            }
+        }
+        cTrans.setBlocksY(markedBlocks);
+        process.inverseBlocks(function.apply(size));
+        process.mergeBlocksIntoComponent(size);
+        process.showImage("Inserted watermark");
+    }
+
+    public ImagePlus extractTranWatermark(Function<Integer, Matrix> function, int u1, int v1, int u2, int v2) {
+        fillBlocks(function);
+        int[][] watermark = new int[heightBlocks][widthBlocks];
+        for (int i = 0; i < heightBlocks; i++) {
+            for (int j = 0; j < widthBlocks; j++) {
+                Matrix block = this.blocks[i][j];
+                double b1 = block.get(u1, v1);
+                double b2 = block.get(u2, v2);
+                if (b1 > b2) {
+                    watermark[i][j] = 0;
+                } else {
+                    watermark[i][j] = 255;
+                }
+            }
+        }
+        return createImagePlus(watermark, widthBlocks, heightBlocks);
+
+    }
+
+    private ImagePlus createImagePlus(int[][] watermark, int width, int height) {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ColorTransform.bImageFromRgb(bufferedImage, watermark, watermark, watermark, height, width);
-        return new ImagePlus("watermark", bufferedImage);
+        return new ImagePlus("Watermark", bufferedImage);
+    }
+
+    private int fillBlocks(Function<Integer, Matrix> function) {
+        cTrans.convertYCbCrToRgb();
+        process.divideIntoBlocks(size);
+        process.transformBlocks(function.apply(size));
+        Matrix[] originalBlocks = cTrans.getBlocksY();
+
+        Matrix[][] dividedOriginalBlocks = new Matrix[heightBlocks][widthBlocks];
+        int counter = 0;
+        for (int i = 0; i < heightBlocks; i++) {
+            for (int j = 0; j < widthBlocks; j++) {
+                dividedOriginalBlocks[i][j] = originalBlocks[counter];
+                counter++;
+            }
+        }
+        this.blocks = dividedOriginalBlocks;
+        return counter;
+    }
+
+
+    private Matrix scaleWatermarkPixels(Matrix pixels) {
+        while (pixels.getRowDimension() != widthBlocks) {
+            pixels = cTrans.downSample(pixels);
+            pixels = pixels.transpose();
+            pixels = cTrans.downSample(pixels);
+            pixels = pixels.transpose();
+        }
+
+        return pixels;
+    }
+
+    private void insertWatermark(int u1, int v1, int u2, int v2, int i, int j, Matrix watermark) {
+        Matrix block = this.blocks[i][j];
+        double b1 = block.get(u1, v1);
+        double b2 = block.get(u2, v2);
+        if (watermark.get(j, i) == 0) {
+            if (!(b1 > b2)) {
+                block.set(u1, v1, b2);
+                block.set(u2, v2, b1);
+            }
+        } else {
+            if (!(b1 <= b2)) {
+                block.set(u1, v1, b2);
+                block.set(u2, v2, b1);
+            }
+        }
+        b1 = block.get(u1, v1);
+        b2 = block.get(u2, v2);
+        if (!(Math.abs(b1 - b2) > bitDepth)) {
+            if (b1 < b2) {
+                block.set(u1, v1, b1 - (double) bitDepth / 2);
+                block.set(u2, v2, b2 + (double) bitDepth / 2);
+            } else {
+                block.set(u1, v1, b1 + (double) bitDepth / 2);
+                block.set(u2, v2, b2 - (double) bitDepth / 2);
+            }
+        }
+        this.blocks[i][j] = block;
     }
 
     private int setZeroAtBitDepth(int value) {

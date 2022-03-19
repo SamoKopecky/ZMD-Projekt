@@ -48,11 +48,24 @@ public class MainWindow {
     private JButton putWatermarkButton;
     private JButton extractWatermarkButton;
     private JSlider bitDepthSlider;
+    private JButton tranExtractWatermarkButton;
+    private JButton tranPutWatermarkButton;
+    private JTextField u1;
+    private JTextField v1;
+    private JTextField u2;
+    private JTextField v2;
+    private JTextField insertDepthLabel;
+    private JRadioButton tranDCTRadioButton;
+    private JRadioButton tranWHTRadioButton;
+    private JRadioButton resizeRadioButton;
+    private JRadioButton JPEGCompersionRadioButton;
     private final ButtonGroup transGroup = new ButtonGroup();
     private final ButtonGroup scaleGroup = new ButtonGroup();
     private final ButtonGroup watermarkGroup = new ButtonGroup();
+    private final ButtonGroup tranWatermarkGroup = new ButtonGroup();
 
     private Function<Integer, Matrix> transformationFunc;
+    private Function<Integer, Matrix> tranWatermarkTranFunc;
     private Sampler sampler;
     private int q;
     private int bitDepth;
@@ -82,9 +95,12 @@ public class MainWindow {
         watermarkGroup.add(redBits);
         watermarkGroup.add(greenBits);
         watermarkGroup.add(blueBits);
+        tranWatermarkGroup.add(tranDCTRadioButton);
+        tranWatermarkGroup.add(tranWHTRadioButton);
         a420RadioButton.setSelected(true);
         a2DDCTRadioButton.setSelected(true);
         redBits.setSelected(true);
+        tranDCTRadioButton.setSelected(true);
         redButton.addActionListener(e -> process.getComponent(Component.RED).show());
         blueButton.addActionListener(e -> process.getComponent(Component.BLUE).show());
         greenButton.addActionListener(e -> process.getComponent(Component.GREEN).show());
@@ -98,19 +114,40 @@ public class MainWindow {
             qValue.setText(Integer.toString(q));
         });
         resetButton.addActionListener(e -> process.loadOriginalImage());
-        RGBButton.addActionListener(e -> process.showImage());
+        RGBButton.addActionListener(e -> process.showImage("RGB"));
         closeAllButton.addActionListener(e -> reset());
-        putWatermarkButton.addActionListener(e -> {
-            chooseSettings();
-            process.putWatermark(bitDepth, watermarkComp);
-        });
         bitDepthSlider.addChangeListener(e -> {
             bitDepth = bitDepthSlider.getValue();
             bitDepthTextField.setText(Integer.toString(bitDepth));
         });
+        putWatermarkButton.addActionListener(e -> {
+            chooseSettings();
+            process.putLsbWatermark(bitDepth, watermarkComp);
+        });
         extractWatermarkButton.addActionListener(e -> {
             chooseSettings();
-            process.extractWatermark(watermarkComp).show();
+            process.extractLsbWatermark(watermarkComp).show();
+        });
+        tranPutWatermarkButton.addActionListener(e -> {
+            chooseSettings();
+            process.putTranWatermark(
+                    Integer.parseInt(u1.getText()),
+                    Integer.parseInt(v1.getText()),
+                    Integer.parseInt(u2.getText()),
+                    Integer.parseInt(v2.getText()),
+                    tranWatermarkTranFunc,
+                    Integer.parseInt(insertDepthLabel.getText())
+            );
+        });
+        tranExtractWatermarkButton.addActionListener(e -> {
+            chooseSettings();
+            process.extractTranWatermark(
+                    Integer.parseInt(u1.getText()),
+                    Integer.parseInt(v1.getText()),
+                    Integer.parseInt(u2.getText()),
+                    Integer.parseInt(v2.getText()),
+                    tranWatermarkTranFunc
+            ).show();
         });
     }
 
@@ -133,13 +170,17 @@ public class MainWindow {
         process.inverseBlocks(transformMatrix);
         process.mergeBlocksIntoComponent(size);
         process.sample(sampler, process::upSample);
-        process.showImage();
+        process.showImage("RGB");
     }
 
     private void chooseSettings() {
         HashMap<String, Function<Integer, Matrix>> transform = new HashMap<>();
         transform.put("2D-DCT", TransformationMatrix::getDctMatrix);
         transform.put("2D-WHT", TransformationMatrix::getWhtMatrix);
+
+        HashMap<String, Function<Integer, Matrix>> watermarkTran = new HashMap<>();
+        watermarkTran.put("2D-DCT", TransformationMatrix::getDctMatrix);
+        watermarkTran.put("2D-WHT", TransformationMatrix::getWhtMatrix);
 
         HashMap<String, Component> watermark = new HashMap<>();
         watermark.put("Red", Component.RED);
@@ -151,11 +192,20 @@ public class MainWindow {
         sampling.put("4:2:2", Sampler.S422);
         sampling.put("4:1:1", Sampler.S411);
 
+
+
         q = qSlider.getValue();
         for (Iterator<AbstractButton> it = transGroup.getElements().asIterator(); it.hasNext(); ) {
             AbstractButton button = it.next();
             if (button.isSelected()) {
                 transformationFunc = transform.get(button.getText());
+                break;
+            }
+        }
+        for (Iterator<AbstractButton> it = tranWatermarkGroup.getElements().asIterator(); it.hasNext(); ) {
+            AbstractButton button = it.next();
+            if (button.isSelected()) {
+                tranWatermarkTranFunc = watermarkTran.get(button.getText());
                 break;
             }
         }
@@ -189,4 +239,6 @@ public class MainWindow {
     private void Initialize() {
         process = new Process(new ImagePlus("Lenna.png"));
     }
+
+
 }

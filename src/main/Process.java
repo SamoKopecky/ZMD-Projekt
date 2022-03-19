@@ -17,7 +17,7 @@ public class Process {
     public Process(ImagePlus imagePlus) {
         this.imagePlus = imagePlus;
         loadOriginalImage();
-        imagePlus.show();
+        //imagePlus.show();
     }
 
     public ImagePlus getComponent(Component component) {
@@ -33,9 +33,9 @@ public class Process {
         cTrans.convertRgbToYCbCr();
     }
 
-    public void showImage() {
+    public void showImage(String name) {
         cTrans.convertYCbCrToRgb();
-        cTrans.createImageFromRgb().show();
+        cTrans.createImageFromRgb(name).show();
     }
 
     public void downSample(Sampler sampler) {
@@ -127,16 +127,23 @@ public class Process {
         cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCb(), (d, i) -> (int) (d * i));
     }
 
-    public void putWatermark(int bitDepth, Component component) {
-        cTrans.updateMaps();
+    public void putLsbWatermark(int bitDepth, Component component) {
         watermark = new Watermark(bitDepth);
-        watermark.putWatermark(component);
+        watermark.putLsbWatermark(component);
     }
 
-    public ImagePlus extractWatermark(Component component){
-        return watermark.extractWatermark(component);
+    public ImagePlus extractLsbWatermark(Component component) {
+        return watermark.extractLsbWatermark(component);
     }
 
+    public void putTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function, int bitDepth) {
+        watermark = new Watermark(bitDepth);
+        watermark.putTranWatermark(function, u1, v1, u2, v2);
+    }
+
+    public ImagePlus extractTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function) {
+        return watermark.extractTranWatermark(function, u1, v1, u2, v2);
+    }
 
     public ColorTransform getcTrans() {
         return cTrans;

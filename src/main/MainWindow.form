@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="main.MainWindow">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="14" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="22" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="5" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="468" height="461"/>
+      <xy x="20" y="20" width="574" height="723"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -82,16 +82,6 @@
         </constraints>
         <properties>
           <editable value="false"/>
-        </properties>
-      </component>
-      <component id="d9d87" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="94" height="18"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="MSE"/>
         </properties>
       </component>
       <component id="6f700" class="javax.swing.JLabel">
@@ -265,34 +255,10 @@
       </component>
       <component id="24f07" class="javax.swing.JLabel" binding="watermarkingControls">
         <constraints>
-          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="LSB watermaking"/>
-        </properties>
-      </component>
-      <component id="b3ae" class="javax.swing.JRadioButton" binding="redBits">
-        <constraints>
-          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Red"/>
-        </properties>
-      </component>
-      <component id="e1660" class="javax.swing.JRadioButton" binding="greenBits">
-        <constraints>
-          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Green"/>
-        </properties>
-      </component>
-      <component id="afc8d" class="javax.swing.JRadioButton" binding="blueBits">
-        <constraints>
-          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Blue"/>
         </properties>
       </component>
       <component id="9f6a0" class="javax.swing.JLabel">
@@ -301,22 +267,6 @@
         </constraints>
         <properties>
           <text value="Bit depth"/>
-        </properties>
-      </component>
-      <component id="33b71" class="javax.swing.JButton" binding="putWatermarkButton" default-binding="true">
-        <constraints>
-          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Put watermark"/>
-        </properties>
-      </component>
-      <component id="2375" class="javax.swing.JButton" binding="extractWatermarkButton">
-        <constraints>
-          <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Extract watermark"/>
         </properties>
       </component>
       <component id="7d44" class="javax.swing.JTextField" binding="bitDepthTextField">
@@ -339,6 +289,236 @@
           <maximum value="8"/>
           <minimum value="1"/>
           <value value="3"/>
+        </properties>
+      </component>
+      <component id="3800f" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="14" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Frequency domain watermarking"/>
+        </properties>
+      </component>
+      <component id="51b3e" class="javax.swing.JButton" binding="tranPutWatermarkButton">
+        <constraints>
+          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Put watermark"/>
+        </properties>
+      </component>
+      <component id="3f896" class="javax.swing.JButton" binding="tranExtractWatermarkButton">
+        <constraints>
+          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Extract watermark"/>
+        </properties>
+      </component>
+      <component id="18ec7" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="MSE"/>
+        </properties>
+      </component>
+      <component id="b3ae" class="javax.swing.JRadioButton" binding="redBits">
+        <constraints>
+          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Red"/>
+        </properties>
+      </component>
+      <component id="33b71" class="javax.swing.JButton" binding="putWatermarkButton" default-binding="true">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Put watermark"/>
+        </properties>
+      </component>
+      <component id="e1660" class="javax.swing.JRadioButton" binding="greenBits">
+        <constraints>
+          <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Green"/>
+        </properties>
+      </component>
+      <component id="2375" class="javax.swing.JButton" binding="extractWatermarkButton">
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Extract watermark"/>
+        </properties>
+      </component>
+      <component id="afc8d" class="javax.swing.JRadioButton" binding="blueBits">
+        <constraints>
+          <grid row="13" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Blue"/>
+        </properties>
+      </component>
+      <component id="4b14d" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="94" height="18"/>
+          </grid>
+        </constraints>
+        <properties>
+          <text value="Transformation settings"/>
+        </properties>
+      </component>
+      <component id="50a14" class="javax.swing.JRadioButton" binding="tranDCTRadioButton">
+        <constraints>
+          <grid row="15" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="94" height="22"/>
+          </grid>
+        </constraints>
+        <properties>
+          <selected value="false"/>
+          <text value="2D-DCT"/>
+        </properties>
+      </component>
+      <component id="d1687" class="javax.swing.JRadioButton" binding="tranWHTRadioButton">
+        <constraints>
+          <grid row="15" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="94" height="22"/>
+          </grid>
+        </constraints>
+        <properties>
+          <text value="2D-WHT"/>
+        </properties>
+      </component>
+      <component id="7b8d2" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Insert depth"/>
+        </properties>
+      </component>
+      <component id="d14e5" class="javax.swing.JTextField" binding="insertDepthLabel">
+        <constraints>
+          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="true"/>
+          <text value="3"/>
+        </properties>
+      </component>
+      <component id="89ef2" class="javax.swing.JTextField" binding="u1">
+        <constraints>
+          <grid row="16" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="true"/>
+          <text value="3"/>
+        </properties>
+      </component>
+      <component id="1ca04" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="17" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="v1:"/>
+        </properties>
+      </component>
+      <component id="3ae9b" class="javax.swing.JTextField" binding="v1">
+        <constraints>
+          <grid row="17" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="true"/>
+          <text value="1"/>
+        </properties>
+      </component>
+      <component id="b71c2" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="18" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="u2:"/>
+        </properties>
+      </component>
+      <component id="818fe" class="javax.swing.JTextField" binding="u2">
+        <constraints>
+          <grid row="18" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="true"/>
+          <text value="1"/>
+        </properties>
+      </component>
+      <component id="e4f27" class="javax.swing.JTextField" binding="v2">
+        <constraints>
+          <grid row="19" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="true"/>
+          <text value="4"/>
+        </properties>
+      </component>
+      <component id="2e630" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="19" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="v2:"/>
+        </properties>
+      </component>
+      <component id="19a53" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="16" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="u1:"/>
+        </properties>
+      </component>
+      <component id="4bc82" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="20" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Attacks"/>
+        </properties>
+      </component>
+      <component id="cdf6e" class="javax.swing.JRadioButton" binding="resizeRadioButton" default-binding="true">
+        <constraints>
+          <grid row="21" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Resize"/>
+        </properties>
+      </component>
+      <component id="b7fc4" class="javax.swing.JRadioButton" binding="JPEGCompersionRadioButton" default-binding="true">
+        <constraints>
+          <grid row="21" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="JPEG Compersion"/>
+        </properties>
+      </component>
+      <component id="16ba4" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Attack method"/>
         </properties>
       </component>
     </children>
