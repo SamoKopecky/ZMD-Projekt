@@ -15,9 +15,9 @@ public class Watermark {
     public ColorTransform cTrans;
     public Process process;
     public Matrix[][] blocks;
-    int size = 8;
-    int heightBlocks;
-    int widthBlocks;
+    public int size = 8;
+    public int heightBlocks;
+    public int widthBlocks;
 
     public Watermark(int bitDepth) {
         this.bitDepth = bitDepth;
@@ -36,7 +36,7 @@ public class Watermark {
         }
     }
 
-    public void putLsbWatermark(Component component) {
+    public BufferedImage putLsbWatermark(Component component) {
         int[][] data = cTrans.getRgbComponents().get(component);
 
         for (int i = 0; i < height; i++) {
@@ -46,6 +46,7 @@ public class Watermark {
         }
         cTrans.getRgbSetters().get(component).accept(data);
         cTrans.createImageFromRgb("Inserted watermark").show();
+        return cTrans.createBufferedImageFromRgb();
     }
 
     public ImagePlus extractLsbWatermark(Component component) {
@@ -105,7 +106,6 @@ public class Watermark {
     }
 
     private int fillBlocks(Function<Integer, Matrix> function) {
-        cTrans.convertYCbCrToRgb();
         process.divideIntoBlocks(size);
         process.transformBlocks(function.apply(size));
         Matrix[] originalBlocks = cTrans.getBlocksY();
@@ -123,15 +123,15 @@ public class Watermark {
     }
 
 
-    private Matrix scaleWatermarkPixels(Matrix pixels) {
-        while (pixels.getRowDimension() != widthBlocks) {
-            pixels = cTrans.downSample(pixels);
-            pixels = pixels.transpose();
-            pixels = cTrans.downSample(pixels);
-            pixels = pixels.transpose();
+    private Matrix scaleWatermarkPixels(Matrix watermark) {
+        while (watermark.getRowDimension() != widthBlocks) {
+            watermark = cTrans.downSample(watermark);
+            watermark = watermark.transpose();
+            watermark = cTrans.downSample(watermark);
+            watermark = watermark.transpose();
         }
 
-        return pixels;
+        return watermark;
     }
 
     private void insertWatermark(int u1, int v1, int u2, int v2, int i, int j, Matrix watermark) {

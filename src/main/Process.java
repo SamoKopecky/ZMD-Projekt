@@ -5,6 +5,7 @@ import ij.ImagePlus;
 import main.enums.Component;
 import main.enums.Sampler;
 
+import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -127,18 +128,28 @@ public class Process {
         cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCb(), (d, i) -> (int) (d * i));
     }
 
-    public void putLsbWatermark(int bitDepth, Component component) {
+    public void putLsbWatermark(int bitDepth, Component component, Function<BufferedImage, BufferedImage> attackFunc,
+                                int compression) {
         watermark = new Watermark(bitDepth);
-        watermark.putLsbWatermark(component);
+        BufferedImage bufferedImage = watermark.putLsbWatermark(component);
+        Attack.compression = compression;
+        watermark.cTrans.setbImage(attackFunc.apply(bufferedImage));
+        watermark.cTrans.fromImageToRgb();
     }
 
     public ImagePlus extractLsbWatermark(Component component) {
         return watermark.extractLsbWatermark(component);
     }
 
-    public void putTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function, int bitDepth) {
+    public void putTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function, int bitDepth,
+                                 Function<BufferedImage, BufferedImage> attackFunc, int compression) {
         watermark = new Watermark(bitDepth);
         watermark.putTranWatermark(function, u1, v1, u2, v2);
+        Attack.compression = compression;
+        watermark.cTrans.setbImage(attackFunc.apply(watermark.cTrans.createBufferedImageFromRgb()));
+        watermark.cTrans.fromImageToRgb();
+        watermark.cTrans.convertRgbToYCbCr();
+
     }
 
     public ImagePlus extractTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function) {

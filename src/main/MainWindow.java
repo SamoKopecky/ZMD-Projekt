@@ -7,8 +7,10 @@ import main.enums.Sampler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class MainWindow {
@@ -57,19 +59,27 @@ public class MainWindow {
     private JTextField insertDepthLabel;
     private JRadioButton tranDCTRadioButton;
     private JRadioButton tranWHTRadioButton;
-    private JRadioButton resizeRadioButton;
-    private JRadioButton JPEGCompersionRadioButton;
+    private JRadioButton rotate90RadioButton;
+    private JRadioButton noneRadioButton;
+    private JRadioButton JPEGRadioButton;
+    private JTextField attackCompressionTextField;
+    private JSlider attackCompressionJSlider;
+    private JRadioButton rotate45RadioButton;
     private final ButtonGroup transGroup = new ButtonGroup();
     private final ButtonGroup scaleGroup = new ButtonGroup();
     private final ButtonGroup watermarkGroup = new ButtonGroup();
     private final ButtonGroup tranWatermarkGroup = new ButtonGroup();
+    private final ButtonGroup attackGroup = new ButtonGroup();
 
     private Function<Integer, Matrix> transformationFunc;
     private Function<Integer, Matrix> tranWatermarkTranFunc;
+    private Function<BufferedImage, BufferedImage> attackFunc;
     private Sampler sampler;
     private int q;
     private int bitDepth;
+    private int compression;
     private Component watermarkComp;
+
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Aplikace");
@@ -87,6 +97,7 @@ public class MainWindow {
         bitDepthTextField.setText("3");
         bitDepth = 3;
         q = 50;
+
         transGroup.add(a2DDCTRadioButton);
         transGroup.add(a2DWHTRadioButton);
         scaleGroup.add(a411RadioButton);
@@ -97,10 +108,16 @@ public class MainWindow {
         watermarkGroup.add(blueBits);
         tranWatermarkGroup.add(tranDCTRadioButton);
         tranWatermarkGroup.add(tranWHTRadioButton);
+        attackGroup.add(rotate90RadioButton);
+        attackGroup.add(rotate45RadioButton);
+        attackGroup.add(JPEGRadioButton);
+        attackGroup.add(noneRadioButton);
+
         a420RadioButton.setSelected(true);
         a2DDCTRadioButton.setSelected(true);
         redBits.setSelected(true);
         tranDCTRadioButton.setSelected(true);
+        noneRadioButton.setSelected(true);
         redButton.addActionListener(e -> process.getComponent(Component.RED).show());
         blueButton.addActionListener(e -> process.getComponent(Component.BLUE).show());
         greenButton.addActionListener(e -> process.getComponent(Component.GREEN).show());
@@ -113,6 +130,10 @@ public class MainWindow {
             q = qSlider.getValue();
             qValue.setText(Integer.toString(q));
         });
+        attackCompressionJSlider.addChangeListener(e -> {
+            compression = attackCompressionJSlider.getValue();
+            attackCompressionTextField.setText(Integer.toString(compression));
+        });
         resetButton.addActionListener(e -> process.loadOriginalImage());
         RGBButton.addActionListener(e -> process.showImage("RGB"));
         closeAllButton.addActionListener(e -> reset());
@@ -122,7 +143,7 @@ public class MainWindow {
         });
         putWatermarkButton.addActionListener(e -> {
             chooseSettings();
-            process.putLsbWatermark(bitDepth, watermarkComp);
+            process.putLsbWatermark(bitDepth, watermarkComp, attackFunc, compression);
         });
         extractWatermarkButton.addActionListener(e -> {
             chooseSettings();
@@ -136,7 +157,8 @@ public class MainWindow {
                     Integer.parseInt(u2.getText()),
                     Integer.parseInt(v2.getText()),
                     tranWatermarkTranFunc,
-                    Integer.parseInt(insertDepthLabel.getText())
+                    Integer.parseInt(insertDepthLabel.getText()),
+                    attackFunc, compression
             );
         });
         tranExtractWatermarkButton.addActionListener(e -> {
@@ -178,10 +200,6 @@ public class MainWindow {
         transform.put("2D-DCT", TransformationMatrix::getDctMatrix);
         transform.put("2D-WHT", TransformationMatrix::getWhtMatrix);
 
-        HashMap<String, Function<Integer, Matrix>> watermarkTran = new HashMap<>();
-        watermarkTran.put("2D-DCT", TransformationMatrix::getDctMatrix);
-        watermarkTran.put("2D-WHT", TransformationMatrix::getWhtMatrix);
-
         HashMap<String, Component> watermark = new HashMap<>();
         watermark.put("Red", Component.RED);
         watermark.put("Blue", Component.BLUE);
@@ -192,36 +210,30 @@ public class MainWindow {
         sampling.put("4:2:2", Sampler.S422);
         sampling.put("4:1:1", Sampler.S411);
 
-
+        HashMap<String, Function<BufferedImage, BufferedImage>> attack = new HashMap<>();
+        attack.put("Rotate 90°", Attack::rotateImage90);
+        attack.put("Rotate 45°", Attack::rotateImage45);
+        attack.put("JPEG compression", Attack::jpegCompression);
+        attack.put("None", image -> image);
 
         q = qSlider.getValue();
-        for (Iterator<AbstractButton> it = transGroup.getElements().asIterator(); it.hasNext(); ) {
+        compression = attackCompressionJSlider.getValue();
+
+        transformationFunc = setSelected(transGroup, transform);
+        tranWatermarkTranFunc = setSelected(tranWatermarkGroup, transform);
+        watermarkComp = setSelected(watermarkGroup, watermark);
+        sampler = setSelected(scaleGroup, sampling);
+        attackFunc = setSelected(attackGroup, attack);
+    }
+
+    private <T> T setSelected(ButtonGroup buttonGroup, HashMap<String, T> map) {
+        for (Iterator<AbstractButton> it = buttonGroup.getElements().asIterator(); it.hasNext(); ) {
             AbstractButton button = it.next();
             if (button.isSelected()) {
-                transformationFunc = transform.get(button.getText());
-                break;
+                return map.get(button.getText());
             }
         }
-        for (Iterator<AbstractButton> it = tranWatermarkGroup.getElements().asIterator(); it.hasNext(); ) {
-            AbstractButton button = it.next();
-            if (button.isSelected()) {
-                tranWatermarkTranFunc = watermarkTran.get(button.getText());
-                break;
-            }
-        }
-        for (Iterator<AbstractButton> it = watermarkGroup.getElements().asIterator(); it.hasNext(); ) {
-            AbstractButton button = it.next();
-            if (button.isSelected()) {
-                watermarkComp = watermark.get(button.getText());
-                break;
-            }
-        }
-        for (Iterator<AbstractButton> it = scaleGroup.getElements().asIterator(); it.hasNext(); ) {
-            AbstractButton button = it.next();
-            if (button.isSelected()) {
-                sampler = sampling.get(button.getText());
-            }
-        }
+        return null;
     }
 
     private void calculate(ColorTransform original, ColorTransform edited) {

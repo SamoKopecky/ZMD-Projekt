@@ -25,7 +25,7 @@ public class ColorTransform {
     private Matrix Cb;
     private Matrix Cr;
 
-    private final BufferedImage bImage;
+    private BufferedImage bImage;
     private final ColorModel colorModel;
 
     private final HashMap<Component, Matrix> notRgbComponents = new HashMap<>();
@@ -82,6 +82,12 @@ public class ColorTransform {
         BufferedImage bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         bImageFromRgb(bImage, red, green, blue, imageHeight, imageWidth);
         return new ImagePlus(name, bImage);
+    }
+
+    public BufferedImage createBufferedImageFromRgb() {
+        BufferedImage bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+        bImageFromRgb(bImage, red, green, blue, imageHeight, imageWidth);
+        return bImage;
     }
 
     public ImagePlus createImageFromComponent(Component component) {
@@ -311,5 +317,9 @@ public class ColorTransform {
 
     public HashMap<Component, Consumer<int[][]>> getRgbSetters() {
         return RgbSetters;
+    }
+
+    public void setbImage(BufferedImage bImage) {
+        this.bImage = bImage;
     }
 }
