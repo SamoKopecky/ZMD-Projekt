@@ -9,9 +9,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Process {
-    private ColorTransform colorTransform;
+    private ColorTransform cTrans;
     private ColorTransform colorTransformOriginal;
     private final ImagePlus imagePlus;
+    private Watermark watermark;
 
     public Process(ImagePlus imagePlus) {
         this.imagePlus = imagePlus;
@@ -20,45 +21,45 @@ public class Process {
     }
 
     public ImagePlus getComponent(Component component) {
-        return colorTransform.createImageFromComponent(component);
+        return cTrans.createImageFromComponent(component);
     }
 
     public void loadOriginalImage() {
         colorTransformOriginal = new ColorTransform(imagePlus.getBufferedImage());
         colorTransformOriginal.fromImageToRgb();
         colorTransformOriginal.convertRgbToYCbCr();
-        colorTransform = new ColorTransform(imagePlus.getBufferedImage());
-        colorTransform.fromImageToRgb();
-        colorTransform.convertRgbToYCbCr();
+        cTrans = new ColorTransform(imagePlus.getBufferedImage());
+        cTrans.fromImageToRgb();
+        cTrans.convertRgbToYCbCr();
     }
 
     public void showImage() {
-        colorTransform.convertYCbCrToRgb();
-        colorTransform.createImageFromRgb().show();
+        cTrans.convertYCbCrToRgb();
+        cTrans.createImageFromRgb().show();
     }
 
     public void downSample(Sampler sampler) {
         Matrix[] matrices = new Matrix[]{
-                new Matrix(colorTransform.getCb().getArray()),
-                new Matrix(colorTransform.getCr().getArray())
+                new Matrix(cTrans.getCb().getArray()),
+                new Matrix(cTrans.getCr().getArray())
         };
         if (sampler == Sampler.S444) {
             loadOriginalImage();
             return;
         }
-        useSample(sampler, matrices, colorTransform::downSample);
+        useSample(sampler, matrices, cTrans::downSample);
     }
 
     public void upSample(Sampler sampler) {
         Matrix[] matrices = new Matrix[]{
-                new Matrix(colorTransform.getCb().getArray()),
-                new Matrix(colorTransform.getCr().getArray())
+                new Matrix(cTrans.getCb().getArray()),
+                new Matrix(cTrans.getCr().getArray())
         };
         if (sampler == Sampler.S444) {
             loadOriginalImage();
             return;
         }
-        useSample(sampler, matrices, colorTransform::upSample);
+        useSample(sampler, matrices, cTrans::upSample);
     }
 
     private void useSample(Sampler sampler, Matrix[] matrices, Function<Matrix, Matrix> matrixFunc) {
@@ -72,8 +73,8 @@ public class Process {
                 changeMatrices(matrixFunc, matrices);
                 changeMatrices(Matrix::transpose, matrices);
         }
-        colorTransform.setCb(matrices[0]);
-        colorTransform.setCr(matrices[1]);
+        cTrans.setCb(matrices[0]);
+        cTrans.setCr(matrices[1]);
     }
 
     private void changeMatrices(Function<Matrix, Matrix> change, Matrix[] matrices) {
@@ -82,27 +83,27 @@ public class Process {
     }
 
     public void divideIntoBlocks(int size) {
-        colorTransform.divideComponentIntoBlocks(colorTransform.getY(), size, colorTransform::setBlocksY);
-        colorTransform.divideComponentIntoBlocks(colorTransform.getCb(), size, colorTransform::setBlocksCb);
-        colorTransform.divideComponentIntoBlocks(colorTransform.getCr(), size, colorTransform::setBlocksCr);
+        cTrans.divideComponentIntoBlocks(cTrans.getY(), size, cTrans::setBlocksY);
+        cTrans.divideComponentIntoBlocks(cTrans.getCb(), size, cTrans::setBlocksCb);
+        cTrans.divideComponentIntoBlocks(cTrans.getCr(), size, cTrans::setBlocksCr);
     }
 
     public void mergeBlocksIntoComponent(int size) {
-        colorTransform.mergeBlocksIntoComponent(size, colorTransform.getY(), colorTransform.getBlocksY());
-        colorTransform.mergeBlocksIntoComponent(size, colorTransform.getCb(), colorTransform.getBlocksCb());
-        colorTransform.mergeBlocksIntoComponent(size, colorTransform.getCr(), colorTransform.getBlocksCr());
+        cTrans.mergeBlocksIntoComponent(size, cTrans.getY(), cTrans.getBlocksY());
+        cTrans.mergeBlocksIntoComponent(size, cTrans.getCb(), cTrans.getBlocksCb());
+        cTrans.mergeBlocksIntoComponent(size, cTrans.getCr(), cTrans.getBlocksCr());
     }
 
     public void transformBlocks(Matrix transformMatrix) {
-        colorTransform.transformBlocks(transformMatrix, colorTransform.getBlocksY());
-        colorTransform.transformBlocks(transformMatrix, colorTransform.getBlocksCb());
-        colorTransform.transformBlocks(transformMatrix, colorTransform.getBlocksCr());
+        cTrans.transformBlocks(transformMatrix, cTrans.getBlocksY(), cTrans::transform);
+        cTrans.transformBlocks(transformMatrix, cTrans.getBlocksCb(), cTrans::transform);
+        cTrans.transformBlocks(transformMatrix, cTrans.getBlocksCr(), cTrans::transform);
     }
 
-    public void inverseBlocks(Matrix transformMatrix){
-        colorTransform.inverseTransformBlocks(transformMatrix, colorTransform.getBlocksY());
-        colorTransform.inverseTransformBlocks(transformMatrix, colorTransform.getBlocksCb());
-        colorTransform.inverseTransformBlocks(transformMatrix, colorTransform.getBlocksCr());
+    public void inverseBlocks(Matrix transformMatrix) {
+        cTrans.transformBlocks(transformMatrix, cTrans.getBlocksY(), cTrans::inverseTransform);
+        cTrans.transformBlocks(transformMatrix, cTrans.getBlocksCb(), cTrans::inverseTransform);
+        cTrans.transformBlocks(transformMatrix, cTrans.getBlocksCr(), cTrans::inverseTransform);
     }
 
 
@@ -113,23 +114,32 @@ public class Process {
     public void quantize(int q) {
         Quantization quantization = new Quantization();
         quantization.scale(q);
-        colorTransform.quantize(quantization.matrixY, colorTransform.getBlocksY());
-        colorTransform.quantize(quantization.matrixColor, colorTransform.getBlocksCr());
-        colorTransform.quantize(quantization.matrixColor, colorTransform.getBlocksCb());
+        cTrans.quantize(quantization.matrixY, cTrans.getBlocksY(), (d, i) -> (int) (d / i));
+        cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCr(), (d, i) -> (int) (d / i));
+        cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCb(), (d, i) -> (int) (d / i));
     }
 
     public void inverseQuantize(int q) {
         Quantization quantization = new Quantization();
         quantization.scale(q);
-        colorTransform.inverseQuantize(quantization.matrixY, colorTransform.getBlocksY());
-        colorTransform.inverseQuantize(quantization.matrixColor, colorTransform.getBlocksCr());
-        colorTransform.inverseQuantize(quantization.matrixColor, colorTransform.getBlocksCb());
+        cTrans.quantize(quantization.matrixY, cTrans.getBlocksY(), (d, i) -> (int) (d * i));
+        cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCr(), (d, i) -> (int) (d * i));
+        cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCb(), (d, i) -> (int) (d * i));
+    }
+
+    public void putWatermark(int bitDepth, Component component) {
+        cTrans.updateMaps();
+        watermark = new Watermark(bitDepth);
+        watermark.putWatermark(component);
+    }
+
+    public ImagePlus extractWatermark(Component component){
+        return watermark.extractWatermark(component);
     }
 
 
-
-    public ColorTransform getColorTransform() {
-        return colorTransform;
+    public ColorTransform getcTrans() {
+        return cTrans;
     }
 
     public ColorTransform getColorTransformOriginal() {

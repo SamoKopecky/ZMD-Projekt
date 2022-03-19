@@ -7,6 +7,7 @@ import main.enums.Sampler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -37,11 +38,25 @@ public class MainWindow {
     private JButton resetButton;
     private JButton RGBButton;
     private JButton closeAllButton;
+    private JLabel transformControl;
+    private JLabel watermarkingControls;
+    private JLabel QValue;
+    private JRadioButton redBits;
+    private JTextField bitDepthTextField;
+    private JRadioButton greenBits;
+    private JRadioButton blueBits;
+    private JButton putWatermarkButton;
+    private JButton extractWatermarkButton;
+    private JSlider bitDepthSlider;
     private final ButtonGroup transGroup = new ButtonGroup();
     private final ButtonGroup scaleGroup = new ButtonGroup();
+    private final ButtonGroup watermarkGroup = new ButtonGroup();
+
     private Function<Integer, Matrix> transformationFunc;
     private Sampler sampler;
     private int q;
+    private int bitDepth;
+    private Component watermarkComp;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Aplikace");
@@ -56,20 +71,27 @@ public class MainWindow {
         Initialize();
         blockSize.setText("8");
         qValue.setText("50");
+        bitDepthTextField.setText("3");
+        bitDepth = 3;
+        q = 50;
         transGroup.add(a2DDCTRadioButton);
         transGroup.add(a2DWHTRadioButton);
         scaleGroup.add(a411RadioButton);
         scaleGroup.add(a420RadioButton);
         scaleGroup.add(a422RadioButton);
+        watermarkGroup.add(redBits);
+        watermarkGroup.add(greenBits);
+        watermarkGroup.add(blueBits);
         a420RadioButton.setSelected(true);
         a2DDCTRadioButton.setSelected(true);
+        redBits.setSelected(true);
         redButton.addActionListener(e -> process.getComponent(Component.RED).show());
         blueButton.addActionListener(e -> process.getComponent(Component.BLUE).show());
         greenButton.addActionListener(e -> process.getComponent(Component.GREEN).show());
         yButton.addActionListener(e -> process.getComponent(Component.Y).show());
         cbButton.addActionListener(e -> process.getComponent(Component.Cb).show());
         crButton.addActionListener(e -> process.getComponent(Component.Cr).show());
-        qualityButton.addActionListener(e -> calculate(process.getColorTransformOriginal(), process.getColorTransform()));
+        qualityButton.addActionListener(e -> calculate(process.getColorTransformOriginal(), process.getcTrans()));
         startProcessButton.addActionListener(e -> transform(Integer.parseInt(blockSize.getText())));
         qSlider.addChangeListener(e -> {
             q = qSlider.getValue();
@@ -78,6 +100,18 @@ public class MainWindow {
         resetButton.addActionListener(e -> process.loadOriginalImage());
         RGBButton.addActionListener(e -> process.showImage());
         closeAllButton.addActionListener(e -> reset());
+        putWatermarkButton.addActionListener(e -> {
+            chooseSettings();
+            process.putWatermark(bitDepth, watermarkComp);
+        });
+        bitDepthSlider.addChangeListener(e -> {
+            bitDepth = bitDepthSlider.getValue();
+            bitDepthTextField.setText(Integer.toString(bitDepth));
+        });
+        extractWatermarkButton.addActionListener(e -> {
+            chooseSettings();
+            process.extractWatermark(watermarkComp).show();
+        });
     }
 
     private void reset() {
@@ -103,38 +137,39 @@ public class MainWindow {
     }
 
     private void chooseSettings() {
+        HashMap<String, Function<Integer, Matrix>> transform = new HashMap<>();
+        transform.put("2D-DCT", TransformationMatrix::getDctMatrix);
+        transform.put("2D-WHT", TransformationMatrix::getWhtMatrix);
+
+        HashMap<String, Component> watermark = new HashMap<>();
+        watermark.put("Red", Component.RED);
+        watermark.put("Blue", Component.BLUE);
+        watermark.put("Green", Component.GREEN);
+
+        HashMap<String, Sampler> sampling = new HashMap<>();
+        sampling.put("4:2:0", Sampler.S420);
+        sampling.put("4:2:2", Sampler.S422);
+        sampling.put("4:1:1", Sampler.S411);
+
         q = qSlider.getValue();
         for (Iterator<AbstractButton> it = transGroup.getElements().asIterator(); it.hasNext(); ) {
             AbstractButton button = it.next();
             if (button.isSelected()) {
-                String setting = button.getText();
-                switch (setting){
-                    case "2D-DCT":
-                        transformationFunc = TransformationMatrix::getDctMatrix;
-                        break;
-                    case "2D-WHT":
-                        transformationFunc = TransformationMatrix::getWhtMatrix;
-                        break;
-                }
+                transformationFunc = transform.get(button.getText());
+                break;
+            }
+        }
+        for (Iterator<AbstractButton> it = watermarkGroup.getElements().asIterator(); it.hasNext(); ) {
+            AbstractButton button = it.next();
+            if (button.isSelected()) {
+                watermarkComp = watermark.get(button.getText());
                 break;
             }
         }
         for (Iterator<AbstractButton> it = scaleGroup.getElements().asIterator(); it.hasNext(); ) {
             AbstractButton button = it.next();
             if (button.isSelected()) {
-                String setting = button.getText();
-                switch (setting){
-                    case "4:2:0":
-                        sampler = Sampler.S420;
-                        break;
-                    case "4:2:2":
-                        sampler = Sampler.S422;
-                        break;
-                    case "4:1:1":
-                        sampler = Sampler.S411;
-                        break;
-                }
-                break;
+                sampler = sampling.get(button.getText());
             }
         }
     }

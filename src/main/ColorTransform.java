@@ -9,13 +9,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.util.HashMap;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ColorTransform {
-    private final int[][] red;
-    private final int[][] green;
-    private final int[][] blue;
+    private int[][] red;
+    private int[][] green;
+    private int[][] blue;
 
     private final int imageHeight;
     private final int imageWidth;
@@ -29,6 +30,7 @@ public class ColorTransform {
 
     private final HashMap<Component, Matrix> notRgbComponents = new HashMap<>();
     private final HashMap<Component, int[][]> RgbComponents = new HashMap<>();
+    private final HashMap<Component, Consumer<int[][]>> RgbSetters = new HashMap<>();
 
     private Matrix[] blocksY;
     private Matrix[] blocksCb;
@@ -47,6 +49,11 @@ public class ColorTransform {
         y = new Matrix(this.imageHeight, this.imageWidth);
         Cb = new Matrix(this.imageHeight, this.imageWidth);
         Cr = new Matrix(this.imageHeight, this.imageWidth);
+
+        RgbSetters.put(Component.RED, this::setRed);
+        RgbSetters.put(Component.BLUE, this::setBlue);
+        RgbSetters.put(Component.GREEN, this::setGreen);
+
 
         updateMaps();
         fromImageToRgb();
@@ -73,7 +80,7 @@ public class ColorTransform {
 
     public ImagePlus createImageFromRgb() {
         BufferedImage bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-        bImageFromRgb(bImage, red, green, blue);
+        bImageFromRgb(bImage, red, green, blue, imageHeight, imageWidth);
         return new ImagePlus("RGB", bImage);
     }
 
@@ -97,7 +104,7 @@ public class ColorTransform {
         } else if (component == Component.BLUE || component == Component.GREEN || component == Component.RED) {
             bImage = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
             int[][] x = RgbComponents.get(component);
-            bImageFromRgb(bImage, x, x, x);
+            bImageFromRgb(bImage, x, x, x, imageHeight, imageWidth);
         }
         return new ImagePlus(component.toString(), bImage);
     }
@@ -189,34 +196,17 @@ public class ColorTransform {
         }
     }
 
-    public void transformBlocks(Matrix transformMatrix, Matrix[] blocks) {
+    public void transformBlocks(Matrix transformMatrix, Matrix[] blocks, BiFunction<Matrix, Matrix, Matrix> transformation) {
         for (int i = 0; i < blocks.length; i++) {
-            blocks[i] = transform(transformMatrix, blocks[i]);
+            blocks[i] = transformation.apply(transformMatrix, blocks[i]);
         }
     }
 
-    public void inverseTransformBlocks(Matrix transformMatrix, Matrix[] blocks) {
-        for (int i = 0; i < blocks.length; i++) {
-            blocks[i] = inverseTransform(transformMatrix, blocks[i]);
-        }
-    }
-
-    public void quantize(int[][] quantizationMatrix, Matrix[] blocks) {
+    public void quantize(int[][] quantizationMatrix, Matrix[] blocks, BiFunction<Double, Integer, Integer> function) {
         for (Matrix block : blocks) {
             for (int j = 0; j < 8; j++) {
                 for (int k = 0; k < 8; k++) {
-                    int value = (int) (block.get(j, k) / quantizationMatrix[j][k]);
-                    block.set(j, k, value);
-                }
-            }
-        }
-    }
-
-    public void inverseQuantize(int[][] quantizationMatrix, Matrix[] blocks) {
-        for (Matrix block : blocks) {
-            for (int j = 0; j < 8; j++) {
-                for (int k = 0; k < 8; k++) {
-                    int value = (int) (block.get(j, k) * quantizationMatrix[j][k]);
+                    int value = function.apply(block.get(j, k), quantizationMatrix[j][k]);
                     block.set(j, k, value);
                 }
             }
@@ -233,13 +223,26 @@ public class ColorTransform {
         return newValue;
     }
 
-    private void bImageFromRgb(BufferedImage bImage, int[][] red, int[][] green, int[][] blue) {
+    public static void bImageFromRgb(BufferedImage bImage, int[][] red, int[][] green, int[][] blue, int imageHeight, int imageWidth) {
         for (int i = 0; i < imageHeight; i++) {
             for (int j = 0; j < imageWidth; j++) {
                 int rgb = new Color(red[i][j], green[i][j], blue[i][j]).getRGB();
                 bImage.setRGB(j, i, rgb);
             }
         }
+    }
+
+
+    public void setRed(int[][] red) {
+        this.red = red;
+    }
+
+    public void setGreen(int[][] green) {
+        this.green = green;
+    }
+
+    public void setBlue(int[][] blue) {
+        this.blue = blue;
     }
 
     public Matrix getY() {
@@ -300,5 +303,13 @@ public class ColorTransform {
 
     public Matrix[] getBlocksCr() {
         return blocksCr;
+    }
+
+    public HashMap<Component, int[][]> getRgbComponents() {
+        return RgbComponents;
+    }
+
+    public HashMap<Component, Consumer<int[][]>> getRgbSetters() {
+        return RgbSetters;
     }
 }
