@@ -155,7 +155,6 @@ public class Process {
         return watermark.extractTranWatermark(function, u1, v1, u2, v2);
     }
 
-
     public String[] calculateQuality(ColorTransform original, ColorTransform edited) {
         String[] result = new String[2];
         Quality quality = new Quality();

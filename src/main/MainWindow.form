@@ -208,7 +208,7 @@
           </grid>
         </constraints>
         <properties>
-          <editable value="false"/>
+          <editable value="true"/>
         </properties>
       </component>
       <component id="e1113" class="javax.swing.JButton" binding="resetButton" default-binding="true">
@@ -276,7 +276,7 @@
           </grid>
         </constraints>
         <properties>
-          <editable value="false"/>
+          <editable value="true"/>
         </properties>
       </component>
       <component id="10778" class="javax.swing.JSlider" binding="bitDepthSlider">
@@ -549,7 +549,7 @@
           </grid>
         </constraints>
         <properties>
-          <editable value="false"/>
+          <editable value="true"/>
           <text value="30"/>
         </properties>
       </component>

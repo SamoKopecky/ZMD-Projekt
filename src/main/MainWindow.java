@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class MainWindow {
@@ -143,10 +142,12 @@ public class MainWindow {
             q = qSlider.getValue();
             qValue.setText(Integer.toString(q));
         });
+        qValue.addActionListener(e -> qSlider.setValue(Integer.parseInt(qValue.getText())));
         attackCompressionJSlider.addChangeListener(e -> {
             compression = attackCompressionJSlider.getValue();
             attackCompressionTextField.setText(Integer.toString(compression));
         });
+        attackCompressionTextField.addActionListener(e -> attackCompressionJSlider.setValue(Integer.parseInt(attackCompressionTextField.getText())));
         resetButton.addActionListener(e -> process.loadOriginalImage());
         RGBButton.addActionListener(e -> process.showImage("RGB"));
         closeAllButton.addActionListener(e -> reset());
@@ -154,6 +155,7 @@ public class MainWindow {
             bitDepth = bitDepthSlider.getValue();
             bitDepthTextField.setText(Integer.toString(bitDepth));
         });
+        bitDepthTextField.addActionListener(e -> bitDepthSlider.setValue(Integer.parseInt(bitDepthTextField.getText())));
         putWatermarkButton.addActionListener(e -> {
             chooseSettings();
             process.putLsbWatermark(bitDepth, watermarkComp, attackFunc, compression);
