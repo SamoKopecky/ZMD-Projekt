@@ -61,8 +61,8 @@ public class MainWindow {
     private JRadioButton rotate90RadioButton;
     private JRadioButton noneRadioButton;
     private JRadioButton JPEGRadioButton;
-    private JTextField attackCompressionTextField;
-    private JSlider attackCompressionJSlider;
+    private JTextField attackJpegQualityTextField;
+    private JSlider attackJpegQualityJSlider;
     private JRadioButton rotate45RadioButton;
     private JButton attackQualityButton;
     private JTextField attackMSE;
@@ -79,7 +79,7 @@ public class MainWindow {
     private Sampler sampler;
     private int q;
     private int bitDepth;
-    private int compression;
+    private int jpegQuality;
     private Component watermarkComp;
 
 
@@ -120,6 +120,7 @@ public class MainWindow {
         redBits.setSelected(true);
         tranDCTRadioButton.setSelected(true);
         noneRadioButton.setSelected(true);
+
         redButton.addActionListener(e -> process.getComponent(Component.RED).show());
         blueButton.addActionListener(e -> process.getComponent(Component.BLUE).show());
         greenButton.addActionListener(e -> process.getComponent(Component.GREEN).show());
@@ -143,11 +144,11 @@ public class MainWindow {
             qValue.setText(Integer.toString(q));
         });
         qValue.addActionListener(e -> qSlider.setValue(Integer.parseInt(qValue.getText())));
-        attackCompressionJSlider.addChangeListener(e -> {
-            compression = attackCompressionJSlider.getValue();
-            attackCompressionTextField.setText(Integer.toString(compression));
+        attackJpegQualityJSlider.addChangeListener(e -> {
+            jpegQuality = attackJpegQualityJSlider.getValue();
+            attackJpegQualityTextField.setText(Integer.toString(jpegQuality));
         });
-        attackCompressionTextField.addActionListener(e -> attackCompressionJSlider.setValue(Integer.parseInt(attackCompressionTextField.getText())));
+        attackJpegQualityTextField.addActionListener(e -> attackJpegQualityJSlider.setValue(Integer.parseInt(attackJpegQualityTextField.getText())));
         resetButton.addActionListener(e -> process.loadOriginalImage());
         RGBButton.addActionListener(e -> process.showImage("RGB"));
         closeAllButton.addActionListener(e -> reset());
@@ -158,11 +159,11 @@ public class MainWindow {
         bitDepthTextField.addActionListener(e -> bitDepthSlider.setValue(Integer.parseInt(bitDepthTextField.getText())));
         putWatermarkButton.addActionListener(e -> {
             chooseSettings();
-            process.putLsbWatermark(bitDepth, watermarkComp, attackFunc, compression);
+            process.insertSpaceWatermark(bitDepth, watermarkComp, attackFunc, jpegQuality);
         });
         extractWatermarkButton.addActionListener(e -> {
             chooseSettings();
-            process.extractLsbWatermark(watermarkComp).show();
+            process.extractSpaceWatermark(watermarkComp).show();
         });
         tranPutWatermarkButton.addActionListener(e -> {
             chooseSettings();
@@ -173,7 +174,7 @@ public class MainWindow {
                     Integer.parseInt(v2.getText()),
                     tranWatermarkTranFunc,
                     Integer.parseInt(insertDepthLabel.getText()),
-                    attackFunc, compression
+                    attackFunc, jpegQuality
             );
         });
         tranExtractWatermarkButton.addActionListener(e -> {
@@ -232,7 +233,7 @@ public class MainWindow {
         attack.put("None", image -> image);
 
         q = qSlider.getValue();
-        compression = attackCompressionJSlider.getValue();
+        jpegQuality = attackJpegQualityJSlider.getValue();
 
         transformationFunc = setSelected(transGroup, transform);
         tranWatermarkTranFunc = setSelected(tranWatermarkGroup, transform);

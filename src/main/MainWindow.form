@@ -8,16 +8,6 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="d1c8d" class="javax.swing.JButton" binding="redButton">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="23" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="RED"/>
-        </properties>
-      </component>
       <component id="8f8a0" class="javax.swing.JButton" binding="greenButton">
         <constraints>
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -26,52 +16,12 @@
           <text value="GREEN"/>
         </properties>
       </component>
-      <component id="6b4a0" class="javax.swing.JButton" binding="blueButton">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="94" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="BLUE"/>
-        </properties>
-      </component>
-      <component id="b9e0a" class="javax.swing.JButton" binding="yButton" default-binding="true">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="23" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="Y"/>
-        </properties>
-      </component>
-      <component id="5c65d" class="javax.swing.JButton" binding="cbButton" default-binding="true">
-        <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="94" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="Cb"/>
-        </properties>
-      </component>
       <component id="1d4b3" class="javax.swing.JButton" binding="crButton" default-binding="true">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Cr"/>
-        </properties>
-      </component>
-      <component id="f8df6" class="javax.swing.JButton" binding="qualityButton" default-binding="true">
-        <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="23" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="Quality"/>
         </properties>
       </component>
       <component id="f6564" class="javax.swing.JTextField" binding="psnrField">
@@ -89,18 +39,7 @@
           <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="PSNR"/>
-        </properties>
-      </component>
-      <component id="4a65c" class="javax.swing.JTextField" binding="blockSize">
-        <constraints>
-          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="94" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <editable value="false"/>
-          <text value=""/>
+          <text value="PSNR ↓"/>
         </properties>
       </component>
       <component id="8ca73" class="javax.swing.JLabel" binding="BlockSizeLabel">
@@ -110,7 +49,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Block size"/>
+          <text value="Block size →"/>
         </properties>
       </component>
       <component id="364f9" class="javax.swing.JButton" binding="startProcessButton">
@@ -128,7 +67,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Transformation settings"/>
+          <text value="Transformation settings ↓"/>
         </properties>
       </component>
       <component id="a2b95" class="javax.swing.JRadioButton" binding="a422RadioButton" default-binding="true">
@@ -181,16 +120,6 @@
           <text value="2D-WHT"/>
         </properties>
       </component>
-      <component id="1837c" class="javax.swing.JTextField" binding="mseField">
-        <constraints>
-          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="94" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <editable value="false"/>
-        </properties>
-      </component>
       <component id="2686d" class="javax.swing.JSlider" binding="qSlider">
         <constraints>
           <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -211,16 +140,6 @@
           <editable value="true"/>
         </properties>
       </component>
-      <component id="e1113" class="javax.swing.JButton" binding="resetButton" default-binding="true">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="23" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="Reload"/>
-        </properties>
-      </component>
       <component id="980a3" class="javax.swing.JButton" binding="RGBButton" default-binding="true">
         <constraints>
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -234,7 +153,7 @@
           <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Q value"/>
+          <text value="Q value ↓"/>
         </properties>
       </component>
       <component id="2649d" class="javax.swing.JButton" binding="closeAllButton" default-binding="true">
@@ -250,6 +169,7 @@
           <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="16" style="1"/>
           <text value="Transformation controls"/>
         </properties>
       </component>
@@ -258,7 +178,8 @@
           <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="LSB watermaking"/>
+          <font size="16" style="1"/>
+          <text value="Space domain watermarking"/>
         </properties>
       </component>
       <component id="9f6a0" class="javax.swing.JLabel">
@@ -266,7 +187,7 @@
           <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Bit depth"/>
+          <text value="Bit depth ↓"/>
         </properties>
       </component>
       <component id="7d44" class="javax.swing.JTextField" binding="bitDepthTextField">
@@ -296,6 +217,7 @@
           <grid row="14" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="16" style="1"/>
           <text value="Frequency domain watermarking"/>
         </properties>
       </component>
@@ -320,7 +242,7 @@
           <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="MSE"/>
+          <text value="MSE ↓"/>
         </properties>
       </component>
       <component id="b3ae" class="javax.swing.JRadioButton" binding="redBits">
@@ -331,28 +253,12 @@
           <text value="Red"/>
         </properties>
       </component>
-      <component id="33b71" class="javax.swing.JButton" binding="putWatermarkButton" default-binding="true">
-        <constraints>
-          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Put watermark"/>
-        </properties>
-      </component>
       <component id="e1660" class="javax.swing.JRadioButton" binding="greenBits">
         <constraints>
           <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Green"/>
-        </properties>
-      </component>
-      <component id="2375" class="javax.swing.JButton" binding="extractWatermarkButton">
-        <constraints>
-          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Extract watermark"/>
         </properties>
       </component>
       <component id="afc8d" class="javax.swing.JRadioButton" binding="blueBits">
@@ -370,7 +276,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Transformation settings"/>
+          <text value="Transformation settings →"/>
         </properties>
       </component>
       <component id="50a14" class="javax.swing.JRadioButton" binding="tranDCTRadioButton">
@@ -399,7 +305,7 @@
           <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Insert depth"/>
+          <text value="Insert depth ↓"/>
         </properties>
       </component>
       <component id="d14e5" class="javax.swing.JTextField" binding="insertDepthLabel">
@@ -494,6 +400,7 @@
           <grid row="20" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <font size="16" style="1"/>
           <text value="Attacks"/>
         </properties>
       </component>
@@ -510,7 +417,7 @@
           <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Attack method"/>
+          <text value="Attack method →"/>
         </properties>
       </component>
       <component id="aace2" class="javax.swing.JRadioButton" binding="noneRadioButton" default-binding="true">
@@ -526,10 +433,10 @@
           <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Compression quality"/>
+          <text value="Compression quality →"/>
         </properties>
       </component>
-      <component id="96587" class="javax.swing.JSlider" binding="attackCompressionJSlider">
+      <component id="96587" class="javax.swing.JSlider" binding="attackJpegQualityJSlider">
         <constraints>
           <grid row="23" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="94" height="24"/>
@@ -542,7 +449,7 @@
           <valueIsAdjusting value="false"/>
         </properties>
       </component>
-      <component id="eb70a" class="javax.swing.JTextField" binding="attackCompressionTextField">
+      <component id="eb70a" class="javax.swing.JTextField" binding="attackJpegQualityTextField">
         <constraints>
           <grid row="23" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -574,17 +481,7 @@
           <grid row="24" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="PSNR"/>
-        </properties>
-      </component>
-      <component id="dc7db" class="javax.swing.JTextField" binding="attackMSE">
-        <constraints>
-          <grid row="25" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="94" height="30"/>
-          </grid>
-        </constraints>
-        <properties>
-          <editable value="false"/>
+          <text value="PSNR ↓"/>
         </properties>
       </component>
       <component id="edb5a" class="javax.swing.JTextField" binding="attackPSNR">
@@ -602,17 +499,109 @@
           <grid row="24" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="MSE"/>
+          <text value="MSE ↓"/>
         </properties>
       </component>
-      <component id="23c9c" class="javax.swing.JButton" binding="attackQualityButton">
+      <component id="f5480" class="javax.swing.JButton" binding="qualityButton">
         <constraints>
-          <grid row="25" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="23" height="30"/>
-          </grid>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Quality"/>
+        </properties>
+      </component>
+      <component id="f89f0" class="javax.swing.JTextField" binding="mseField">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="false"/>
+        </properties>
+      </component>
+      <component id="3349" class="javax.swing.JButton" binding="attackQualityButton">
+        <constraints>
+          <grid row="25" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Quality"/>
+        </properties>
+      </component>
+      <component id="9a76e" class="javax.swing.JTextField">
+        <constraints>
+          <grid row="25" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="false"/>
+        </properties>
+      </component>
+      <component id="2375" class="javax.swing.JButton" binding="extractWatermarkButton">
+        <constraints>
+          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Extract watermark"/>
+        </properties>
+      </component>
+      <component id="33b71" class="javax.swing.JButton" binding="putWatermarkButton" default-binding="true">
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Put watermark"/>
+        </properties>
+      </component>
+      <component id="b9b5c" class="javax.swing.JTextField" binding="blockSize">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <editable value="false"/>
+        </properties>
+      </component>
+      <component id="baeb3" class="javax.swing.JButton" binding="blueButton">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="BLUE"/>
+        </properties>
+      </component>
+      <component id="47278" class="javax.swing.JButton" binding="redButton">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="RED"/>
+        </properties>
+      </component>
+      <component id="5b7b6" class="javax.swing.JButton" binding="yButton">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Y"/>
+        </properties>
+      </component>
+      <component id="584c7" class="javax.swing.JButton" binding="cbButton">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Cb"/>
+        </properties>
+      </component>
+      <component id="e7847" class="javax.swing.JButton" binding="resetButton">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Reload"/>
         </properties>
       </component>
     </children>

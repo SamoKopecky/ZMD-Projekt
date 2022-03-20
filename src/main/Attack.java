@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Attack {
-    public static int compression;
+    public static int jpegQuality;
 
     public static BufferedImage rotateImage(BufferedImage image, int degrees) {
         int width = image.getWidth();
@@ -22,7 +22,7 @@ public class Attack {
         Graphics2D graphics2D = newImageFromBuffer.createGraphics();
         graphics2D.rotate(Math.toRadians(degrees), (double) width / 2, (double) height / 2);
         graphics2D.drawImage(image, null, 0, 0);
-        new ImagePlus("rotation", newImageFromBuffer).show();
+        new ImagePlus("Rotation by " + degrees + "°", newImageFromBuffer).show();
         return newImageFromBuffer;
     }
 
@@ -42,7 +42,7 @@ public class Attack {
             ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("JPEG").next();
             ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
             jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            jpgWriteParam.setCompressionQuality(compression / 100F);
+            jpgWriteParam.setCompressionQuality(jpegQuality / 100F);
             jpgWriter.setOutput(outputStream);
             jpgWriter.write(null, new IIOImage(image, null, null), jpgWriteParam);
             jpgWriter.dispose();
@@ -51,7 +51,7 @@ public class Attack {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new ImagePlus("JPEG", bufferedImage).show();
+        new ImagePlus("JPEG " + jpegQuality + "%", bufferedImage).show();
         return bufferedImage;
     }
 }

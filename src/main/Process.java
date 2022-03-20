@@ -18,7 +18,6 @@ public class Process {
     public Process(ImagePlus imagePlus) {
         this.imagePlus = imagePlus;
         loadOriginalImage();
-        //imagePlus.show();
     }
 
     public ImagePlus getComponent(Component component) {
@@ -128,24 +127,24 @@ public class Process {
         cTrans.quantize(quantization.matrixColor, cTrans.getBlocksCb(), (d, i) -> (int) (d * i));
     }
 
-    public void putLsbWatermark(int bitDepth, Component component, Function<BufferedImage, BufferedImage> attackFunc,
-                                int compression) {
+    public void insertSpaceWatermark(int bitDepth, Component component,
+                                     Function<BufferedImage, BufferedImage> attackFunc, int jpegQuality) {
         watermark = new Watermark(bitDepth);
-        BufferedImage bufferedImage = watermark.putLsbWatermark(component);
-        Attack.compression = compression;
+        BufferedImage bufferedImage = watermark.insertSpaceWatermark(component);
+        Attack.jpegQuality = jpegQuality;
         watermark.cTrans.setbImage(attackFunc.apply(bufferedImage));
         watermark.cTrans.fromImageToRgb();
     }
 
-    public ImagePlus extractLsbWatermark(Component component) {
-        return watermark.extractLsbWatermark(component);
+    public ImagePlus extractSpaceWatermark(Component component) {
+        return watermark.extractSpaceWatermark(component);
     }
 
     public void putTranWatermark(int u1, int v1, int u2, int v2, Function<Integer, Matrix> function, int bitDepth,
-                                 Function<BufferedImage, BufferedImage> attackFunc, int compression) {
+                                 Function<BufferedImage, BufferedImage> attackFunc, int jpegQuality) {
         watermark = new Watermark(bitDepth);
-        watermark.putTranWatermark(function, u1, v1, u2, v2);
-        Attack.compression = compression;
+        watermark.insertTranWatermark(function, u1, v1, u2, v2);
+        Attack.jpegQuality = jpegQuality;
         watermark.cTrans.setbImage(attackFunc.apply(watermark.cTrans.createBufferedImageFromRgb()));
         watermark.cTrans.fromImageToRgb();
         watermark.cTrans.convertRgbToYCbCr();

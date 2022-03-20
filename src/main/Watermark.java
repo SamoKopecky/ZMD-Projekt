@@ -39,7 +39,7 @@ public class Watermark {
         }
     }
 
-    public BufferedImage putLsbWatermark(Component component) {
+    public BufferedImage insertSpaceWatermark(Component component) {
         int[][] data = cTrans.getRgbComponents().get(component);
 
         for (int i = 0; i < height; i++) {
@@ -52,7 +52,7 @@ public class Watermark {
         return cTrans.createBufferedImageFromRgb();
     }
 
-    public ImagePlus extractLsbWatermark(Component component) {
+    public ImagePlus extractSpaceWatermark(Component component) {
         int[][] data = cTrans.getRgbComponents().get(component);
         int[][] watermark = new int[height][width];
 
@@ -64,7 +64,7 @@ public class Watermark {
         return createImagePlus(watermark, width, height);
     }
 
-    public void putTranWatermark(Function<Integer, Matrix> function, int u1, int v1, int u2, int v2) {
+    public void insertTranWatermark(Function<Integer, Matrix> function, int u1, int v1, int u2, int v2) {
         int counter = fillBlocks(function);
 
         Matrix[] markedBlocks = new Matrix[counter];
@@ -112,7 +112,7 @@ public class Watermark {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ColorTransform.bImageFromRgb(bufferedImage, watermark, watermark, watermark, height, width);
         extractedWatermark = new ColorTransform(bufferedImage);
-        return new ImagePlus("Watermark", bufferedImage);
+        return new ImagePlus("Extracted watermark", bufferedImage);
     }
 
     private int fillBlocks(Function<Integer, Matrix> function) {
