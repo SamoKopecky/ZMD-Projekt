@@ -12,3 +12,10 @@
 - Possible measurements:
     - `MSE` -- Mean squared error
     - `PSNR` -- Peak signal-to-noise ratio
+
+- This project also showcases watermarking techniques which include:
+    - Spacial watermarking of a black and white image
+    - Frequency watermarking of a black and white image
+- This project also includes attack methods to these watermarking techniques such as:
+    - Attack with a JPEG compression
+    - Attack by rotating 45 and 90 degrees
