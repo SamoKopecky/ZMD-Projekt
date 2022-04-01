@@ -25,7 +25,6 @@ public class Watermark {
         this.bitDepth = bitDepth;
         process = new Process(new ImagePlus("Lenna.png"));
         cTrans = process.getcTrans();
-
         BufferedImage bImage = new ImagePlus("watermark.png").getBufferedImage();
         originalWatermark = new ColorTransform(bImage);
         width = bImage.getWidth();
@@ -45,11 +44,7 @@ public class Watermark {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int c0 = data[i][j];
-                int c0Star = setZeroAtBitDepth(c0);
-                int w = (int) watermarkPixels.get(j, i);
-                int wStar = setOneAtBitDepth(w);
-                data[i][j] = c0Star | wStar;
+                data[i][j] = setZeroAtBitDepth(data[i][j]) | setOneAtBitDepth((int) watermarkPixels.get(j, i));
             }
         }
         cTrans.getRgbSetters().get(component).accept(data);
@@ -63,10 +58,7 @@ public class Watermark {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int watermarkedData = data[i][j];
-                int mask = setOneAtBitDepth(255);
-                int extractedWatermark = watermarkedData & mask;
-                watermark[i][j] = blackOrWhite(extractedWatermark);
+                watermark[i][j] = blackOrWhite(data[i][j] & setOneAtBitDepth(255));
             }
         }
         return createImagePlus(watermark, width, height);
@@ -185,7 +177,7 @@ public class Watermark {
     }
 
     private int setOneAtBitDepth(int value) {
-        return (1 << bitDepth - 1) & value;
+        return 1 << bitDepth - 1 & value;
     }
 
     private int blackOrWhite(int value) {
